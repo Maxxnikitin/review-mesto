@@ -8,7 +8,6 @@ import {PopupWithForm} from '../components/PopupWithForm.js';
 import {FormValidator} from '../components/FormValidator.js';
 import {UserInfo} from '../components/UserInfo.js';
 
-const ESC_KEYCODE = 27;
 // Константы
 
 const initialCards = [
@@ -54,7 +53,6 @@ const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 
 // Данные форм и элементы форм
-const inputList = Array.from(document.querySelectorAll('.form__input'));
 const nameInput = document.querySelector('.popup__input_type_name');
 const jobInput = document.querySelector('.popup__input_type_description');
 const buttonSubmitInfo = document.querySelector('#btn-info');
