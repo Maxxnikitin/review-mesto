@@ -1,13 +1,18 @@
 {
-  "name": "mesto",
+  "private": true,
+  "name": "sprint_7",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "Yandex.Praktikum canonical projects",
   "scripts": {
+    "hint": "htmlhint ./public/index.html",
     "build": "rm -rf dist && webpack",
     "dev": "webpack-dev-server --open --watch",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/pcr-web/canonical_ru-en_sprint7.git"
   },
   "author": "Maxx Nikitin",
   "license": "ISC",
