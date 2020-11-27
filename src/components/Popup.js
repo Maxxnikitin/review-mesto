@@ -1,18 +1,18 @@
 export class Popup {
   constructor(popupSelector) {
     this.popupSelector = popupSelector;
-    this.closeButton = this.popupSelector.querySelector('#button_close-item');
-    this.overlay = this.popupSelector.querySelector('.popup__overlay');
+    this.closeButton = this.popupSelector.querySelector('.popup__close');
+    /* this.overlay = this.popupSelector.querySelector('.popup'); */
   }
 
   close() {
     this.remEventListeners()
-    this.popupSelector.classList.remove('popup_opened');
+    this.popupSelector.classList.remove('popup_is-opened');
   }
 
   open() {
     this.setEventListeners();
-    this.popupSelector.classList.add('popup_opened');
+    this.popupSelector.classList.add('popup_is-opened');
   }
 
   _handleEscClose(evt) {
@@ -29,7 +29,7 @@ export class Popup {
     //закрытие попапа кнопкой Esc
     document.addEventListener('keydown', this.escClose);
     //Закрытие попапа по оверлею
-    this.overlay.addEventListener('click', this.clickClose);
+    /* this.overlay.addEventListener('click', this.clickClose); */
   }
 
   //Удаление слушателей
@@ -39,6 +39,6 @@ export class Popup {
     //закрытие попапа кнопкой Esc
     document.removeEventListener('keydown', this.escClose);
     //Закрытие попапа по оверлею
-    this.overlay.removeEventListener('click', this.clickClose);
+    /* this.overlay.removeEventListener('click', this.clickClose); */
   }
 }

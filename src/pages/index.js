@@ -1,5 +1,9 @@
-import Card from '../components/Card.js';
-import FormValidator from '../components/FormValidator.js';
+import {Card} from '../components/Card.js';
+import {PopupWithImage} from '../components/PopupWithImage.js';
+import {Section} from '../components/Section.js';
+import {PopupWithForm} from '../components/PopupWithForm.js';
+import {FormValidator} from '../components/FormValidator.js';
+import {UserInfo} from '../components/UserInfo.js';
 
 const ESC_KEYCODE = 27;
 // Константы
@@ -47,13 +51,14 @@ const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 
 // Данные форм и элементы форм
-const titleInputValue = editFormModalWindow.querySelector('.popup__input_type_name');
-const descriptionInputValue = editFormModalWindow.querySelector('.popup__input_type_description');
-const cardNameInputValue = cardFormModalWindow.querySelector('.popup__input_type_card-name');
-const cardLinkInputValue = cardFormModalWindow.querySelector('.popup__input_type_url');
+const inputList = Array.from(document.querySelectorAll('.form__input'));
+const nameInput = document.querySelector('.popup__input_type_name');
+const jobInput = document.querySelector('.popup__input_type_description');
+const buttonSubmitInfo = document.querySelector('#btn-info');
+const buttonSubmitImg = document.querySelector('#btn-img');
 // решение на минималках. Конечно, студент может корректно обобрать велью инпутов в форме.
 
-const cardSelector = '.card-template';
+const cardSelector = document.querySelector('.card-template');
 const defaultFormConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -63,86 +68,77 @@ const defaultFormConfig = {
   errorClass: 'popup__error_visible'
 };
 
-const isEscEvent = (evt, action) => {
-  const activePopup = document.querySelector('.popup_is-opened');
-  if (evt.which === ESC_KEYCODE) {
-    action(activePopup);
+//Попап с увеличенными фото
+const popupBigPicture = new PopupWithImage(imageModalWindow);
+
+//функция блокировки кнопки отправки при открытии попапа
+const btnDisabled = (btn) => {
+  btn.disabled = true;
+  btn.classList.add(defaultFormConfig.inactiveButtonClass)
+}
+
+//Форма с добавлением фото
+const openFormImage = new PopupWithForm(cardFormModalWindow, {
+  submitForm: (item) => {
+      const card = new Card(cardSelector, {
+          data: item, handleCardClick: () => {
+            popupBigPicture.open(item);
+          }
+      });
+      const cardElement = card.getView();
+      CardList.addItem(cardElement);
+      openFormImage.close();
   }
+},);
+
+const openPicForm = function () {
+  cardFormValidator.removeError(cardFormModalWindow);
+  btnDisabled(buttonSubmitImg);
+  openFormImage.open();
+}
+
+export const formProfileInfo = {
+  profileAuthor: profileTitle,
+  profileStatus: profileDescription,
 };
 
-const openModalWindow = (modalWindow) => {
-  modalWindow.classList.add('popup_is-opened');
-  document.addEventListener('keyup', handleEscUp);
-};
-
-const closeModalWindow = (modalWindow) => {
-  modalWindow.classList.remove('popup_is-opened');
-  document.removeEventListener('keyup', handleEscUp);
-};
-
-const renderCard = (data, wrap) => {
-  const card = new Card(data, cardSelector);
-  wrap.prepend(card.getView());
-};
-
-const handleEscUp = (evt) => {
-  evt.preventDefault();
-  isEscEvent(evt, closeModalWindow);
-};
-
-const formSubmitHandler = (evt) => {
-  evt.preventDefault();
-  profileTitle.textContent = titleInputValue.value;
-  profileDescription.textContent = descriptionInputValue.value;
-  closeModalWindow(editFormModalWindow);
-};
-
-const cardFormSubmitHandler = (evt) => {
-  evt.preventDefault();
-  renderCard({
-    name: cardNameInputValue.value,
-    link: cardLinkInputValue.value
-  }, placesWrap);
-  closeModalWindow(cardFormModalWindow);
-};
-
-// EventListeners
-editFormModalWindow.addEventListener('submit', formSubmitHandler);
-cardFormModalWindow.addEventListener('submit', cardFormSubmitHandler);
-
-openEditFormButton.addEventListener('click', () => {
-  titleInputValue.value = profileTitle.textContent;
-  descriptionInputValue.value = profileDescription.textContent;
-  openModalWindow(editFormModalWindow);
-});
-
-openCardFormButton.addEventListener('click', () => {
-  openModalWindow(cardFormModalWindow);
-});
-
-editFormModalWindow.addEventListener('click', (evt) => {
-  if (evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
-    closeModalWindow(editFormModalWindow);
-  }
-});
-cardFormModalWindow.addEventListener('click', (evt) => {
-  if (evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
-    closeModalWindow(cardFormModalWindow);
-  }
-});
-imageModalWindow.addEventListener('click', (evt) => {
-  if (evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
-    closeModalWindow(imageModalWindow);
+//Форма с редактированием профиля
+const userInfo = new UserInfo(formProfileInfo);
+const openFormInfo = new PopupWithForm(editFormModalWindow, {
+  submitForm: (item) => {
+    userInfo.setUserInfo(item);
+    openFormInfo.close();
   }
 });
 
-// Инициализация
-initialCards.forEach((data) => {
-  renderCard(data, placesWrap)
-});
+const openInfoForm = () => {
+  const infoUser = userInfo.getUserInfo();
+  nameInput.value = infoUser.name;
+  jobInput.value = infoUser.info;
+  cardFormValidator.removeError(editFormModalWindow);
+  btnDisabled(buttonSubmitInfo);
+  openFormInfo.open();
+}
+
+const CardList = new Section({
+  initialCards, renderer: (item) => {
+    const card = new Card(cardSelector, {
+      data: item, handleCardClick: () => {
+        popupBigPicture.open(item);
+      }
+    });
+    const cardElement = card.getView();
+    CardList.addItem(cardElement);
+  }
+}, placesWrap);
+
+CardList.renderItems(initialCards);
 
 const editFormValidator = new FormValidator(defaultFormConfig, editFormModalWindow);
 const cardFormValidator = new FormValidator(defaultFormConfig, cardFormModalWindow);
 
 editFormValidator.enableValidation();
 cardFormValidator.enableValidation();
+
+openCardFormButton.addEventListener("click", () => openPicForm());
+openEditFormButton.addEventListener("click", () => openInfoForm());

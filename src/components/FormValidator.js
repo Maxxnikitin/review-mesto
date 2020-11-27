@@ -1,4 +1,4 @@
-class FormValidator {
+export class FormValidator {
   constructor(config, popupElement) {
     this._inputSelector = config.inputSelector;
     this._submitButtonSelector = config.submitButtonSelector;
@@ -32,8 +32,8 @@ class FormValidator {
     errorElement.classList.remove(this._errorClass);
   }
 
-  _toggleButtonState() {
-    if (this._getInvalidInput) {
+  _toggleButtonState(inputList) {
+    if (this._getInvalidInput(inputList)) {
       this._buttonElement.classList.add(this._inactiveButtonClass);
       this._buttonElement.disabled = true;
     } else {
@@ -42,11 +42,22 @@ class FormValidator {
     }
   }
 
-  _getInvalidInput() {
-    return this._inputList.some((inputElement) => {
+  _getInvalidInput(inputList) {
+    return inputList.some((inputElement) => {
       return !inputElement.validity.valid;
     });
   }
+
+  //Функция удаления ошибок при открытии попапа
+  removeError(elem) {
+    elem.querySelectorAll('.popup__error').forEach((span) => {
+      span.classList.remove('popup__error_active');
+      span.textContent = '';
+    });
+    elem.querySelectorAll('.popup__input').forEach((input) => {
+      input.classList.remove('popup__input_type_error');
+    });
+  };
 
   _setEventListeners() {
     this._inputList = Array.from(this._element.querySelectorAll(this._inputSelector));
@@ -55,7 +66,7 @@ class FormValidator {
     this._inputList.forEach((inputElement) => {
       inputElement.addEventListener('input', () => {
         this._checkInputValidity(inputElement);
-        this._toggleButtonState();
+        this._toggleButtonState(this._inputList);
       });
     });
   }
@@ -68,5 +79,3 @@ class FormValidator {
     this._setEventListeners();
   }
 }
-
-export default FormValidator;

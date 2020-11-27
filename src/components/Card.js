@@ -23,17 +23,16 @@ const isEscEvent = (evt, action) => {
 // Эти функции и переменные -- дубли из index.js. Они нарушают DRY, но в следующем спринте студенты удалят этот код.
 // Как "Можно лучше" посоветуйте вынести эти функции и переменные в модуль utils.js и импортировать их в класс Card.
 
-class Card {
-  constructor(data, cardSelector) {
+export class Card {
+  constructor(cardSelector, {data, handleCardClick}) {
     this._text = data.name;
     this._link = data.link;
-
+    this._handleCardClick = handleCardClick;
     this._cardSelector = cardSelector;
   }
 
   _getTemplate() {
-    const cardElement = document
-      .querySelector(this._cardSelector)
+    const cardElement = this._cardSelector
       .content
       .querySelector('.card')
       .cloneNode(true);
@@ -49,7 +48,7 @@ class Card {
       .addEventListener('click', () => this._handleDeleteCard());
 
     this._element.querySelector('.card__image')
-      .addEventListener('click', () => this._handlePreviewPicture());
+      .addEventListener('click', () => this._handleCardClick());
   }
 
   _handleLikeIcon() {
@@ -64,7 +63,7 @@ class Card {
     this._element = null;
   }
 
-  _handlePreviewPicture() {
+  /* _handlePreviewPicture() {
     // Студенты изучат способы описания взаимодействия между классами только в следующем спринте.
     // Эту зависимость студенты будут передавать как хендлер в конструктор класса.
     // Поэтому на данный момент они дублируют код из index.js в Card.js (Объявление переменных, функции)
@@ -75,18 +74,17 @@ class Card {
 
     imageModalWindow.classList.add('popup_is-opened');
     document.addEventListener('keyup', handleEscUp);
-  }
+  } */
 
   getView() {
     // Публичный метод, возвращащий представление карточки;
     this._element = this._getTemplate();
     this._setEventListeners();
-
-    this._element.querySelector('.card__image').style.backgroundImage = `url(${this._link})`;
-    this._element.querySelector('.card__title').textContent = this._text;
+    const photoImg = this._element.querySelector('.card__image');
+    const photoName = this._element.querySelector('.card__title');
+    photoImg.style.backgroundImage = `url(${this._link})`;
+    photoName.textContent = this._text;
 
     return this._element;
   }
 }
-
-export default Card;

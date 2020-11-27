@@ -6,8 +6,8 @@ export class PopupWithImage extends Popup {
   }
 
   open(data) {
-    const popupImage = document.querySelector('.big-image');
-    const popupName = document.querySelector('.big-image__title');
+    const popupImage = document.querySelector('.popup__image');
+    const popupName = document.querySelector('.popup__caption');
     popupImage.src = data.link;
     popupImage.alt = data.name;
     popupName.textContent = data.name;
