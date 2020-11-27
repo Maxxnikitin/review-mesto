@@ -2,7 +2,6 @@ export class Popup {
   constructor(popupSelector) {
     this.popupSelector = popupSelector;
     this.closeButton = this.popupSelector.querySelector('.popup__close');
-    /* this.overlay = this.popupSelector.querySelector('.popup'); */
   }
 
   close() {
@@ -28,8 +27,6 @@ export class Popup {
     this.closeButton.addEventListener('click', this.clickClose);
     //закрытие попапа кнопкой Esc
     document.addEventListener('keydown', this.escClose);
-    //Закрытие попапа по оверлею
-    /* this.overlay.addEventListener('click', this.clickClose); */
   }
 
   //Удаление слушателей
@@ -38,7 +35,5 @@ export class Popup {
     this.closeButton.removeEventListener('click', this.clickClose);
     //закрытие попапа кнопкой Esc
     document.removeEventListener('keydown', this.escClose);
-    //Закрытие попапа по оверлею
-    /* this.overlay.removeEventListener('click', this.clickClose); */
   }
 }
